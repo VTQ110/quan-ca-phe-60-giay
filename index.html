@@ -1,0 +1,573 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<meta name="theme-color" content="#C8372D">
+<meta name="description" content="Game pha cà phê 60 giây: phục vụ khách quán vỉa hè Sài Gòn ngay trên trình duyệt điện thoại.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cpath d='M12 18h40l-5 40H17z' fill='%23F6EBD9' stroke='%233A2217' stroke-width='4'/%3E%3Cpath d='M14 30h36l-3 26H17z' fill='%234A2C1D'/%3E%3Cpath d='M38 4l-4 26' stroke='%23C8372D' stroke-width='5' stroke-linecap='round'/%3E%3C/svg%3E">
+<style>html,body{margin:0;padding:0}:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);box-sizing:border-box;height:100%}[hidden]{display:none!important}img{max-width:100%}</style>
+<title>Quán Cà Phê 60 Giây</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;800&family=Be+Vietnam+Pro:wght@400;600;700&display=swap">
+<style>
+/* Layout: one phone-sized column; customers on top, counter in the middle, ingredient shelf under the thumb. Single warm café look in both themes. */
+:root{
+  --coffee:#3A2217; --bean:#7A4A2E; --cream:#F6EBD9; --paper:#FFF9F0; --wood:#E6D3B5;
+  --stool:#C8372D; --tile:#1F6F64; --gold:#E9A92B; --ok:#2E8B57; --ink-soft:#6A4330;
+  --display:'Baloo 2', 'Trebuchet MS', system-ui, sans-serif;
+  --body:'Be Vietnam Pro', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  color-scheme: light;
+}
+html,body{height:100%}
+body{background:var(--cream);color:var(--coffee);font-family:var(--body);-webkit-tap-highlight-color:transparent;overscroll-behavior:none}
+*{box-sizing:border-box}
+button{font-family:inherit;color:inherit;cursor:pointer;touch-action:manipulation}
+button:focus-visible,a:focus-visible{outline:3px solid var(--tile);outline-offset:2px}
+.app{height:100%;max-width:480px;margin:0 auto;display:flex;flex-direction:column;position:relative;overflow:hidden}
+.screen{flex:1;display:flex;flex-direction:column;min-height:0}
+
+/* ---------- Start ---------- */
+#start{padding:20px 16px 20px;gap:14px;align-items:center;overflow-y:auto}
+.eyebrow{font-size:12px;font-weight:700;letter-spacing:3px;color:var(--bean);text-transform:uppercase}
+h1{margin:0;font-family:var(--display);font-weight:800;font-size:40px;line-height:.95;text-align:center;text-wrap:balance}
+h1 span{display:block;color:var(--stool);font-size:60px}
+.store{width:100%;max-width:300px;height:auto}
+.daychips{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
+.chip{min-width:44px;height:40px;padding:0 14px;border-radius:999px;border:2px solid var(--coffee);background:var(--paper);font-weight:700;font-size:14px}
+.chip[aria-pressed="true"]{background:var(--coffee);color:var(--paper)}
+.chip:disabled{opacity:.35;cursor:not-allowed}
+.brief{width:100%;background:var(--paper);border:2px solid var(--wood);border-radius:18px;padding:14px 16px;display:flex;flex-direction:column;gap:10px}
+.brief-row{display:flex;justify-content:space-between;align-items:baseline;gap:12px;font-size:14px}
+.brief-row b{font-family:var(--display);font-size:20px;font-variant-numeric:tabular-nums}
+.recipes{display:flex;flex-direction:column;gap:8px}
+.rec{display:flex;flex-direction:column;gap:4px;padding-top:8px;border-top:1px dashed var(--wood)}
+.rec-head{display:flex;justify-content:space-between;font-weight:700;font-size:14px}
+.rec-head .new{font-size:11px;letter-spacing:1px;color:var(--paper);background:var(--tile);border-radius:6px;padding:2px 6px;margin-left:6px}
+.rec-steps{display:flex;flex-wrap:wrap;gap:4px;align-items:center;font-size:12px;color:var(--ink-soft)}
+.step{display:inline-flex;align-items:center;gap:4px;background:var(--cream);border-radius:999px;padding:3px 8px 3px 4px;color:var(--coffee);font-weight:600}
+.dot{width:14px;height:14px;border-radius:50%;border:1.5px solid var(--coffee);flex-shrink:0}
+.big{width:100%;height:58px;border-radius:18px;border:3px solid var(--coffee);background:var(--stool);color:#FFFFFF;font-family:var(--display);font-weight:800;font-size:24px}
+.ghost{background:none;border:none;font-size:13px;font-weight:600;color:var(--bean);text-decoration:underline;min-height:44px}
+.rowbtns{display:flex;gap:10px;width:100%}
+.rowbtns .sec{flex:1;height:48px;border-radius:14px;border:2px solid var(--coffee);background:var(--paper);font-weight:700;font-size:14px}
+
+/* ---------- Play ---------- */
+.hud{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:10px 16px 6px}
+.timer{display:flex;align-items:center;gap:6px;background:var(--stool);color:#FFFFFF;border-radius:999px;padding:4px 14px;font-family:var(--display);font-weight:800;font-size:22px;font-variant-numeric:tabular-nums;min-width:92px;justify-content:center}
+.timer.hurry{animation:pulse .5s ease-in-out infinite alternate}
+@keyframes pulse{to{transform:scale(1.07)}}
+.money{font-family:var(--display);font-weight:800;font-size:20px;font-variant-numeric:tabular-nums}
+.stars{display:flex;gap:1px}
+.stars svg{width:22px;height:22px}
+.iconbtn{width:44px;height:44px;border-radius:14px;border:2px solid var(--coffee);background:var(--paper);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.goal{padding:0 16px;display:flex;align-items:center;gap:10px;font-size:12px;font-weight:600;color:var(--ink-soft)}
+.goalbar{flex:1;height:8px;border-radius:4px;background:var(--wood);overflow:hidden}
+.goalbar i{display:block;height:100%;width:0;background:var(--tile);transition:width .3s}
+.combo{color:var(--stool);font-weight:800}
+
+.queue{flex:1;min-height:150px;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;padding:8px 12px 0;align-items:end}
+.slot{position:relative;display:flex;flex-direction:column;align-items:center;gap:4px;background:none;border:none;padding:0 0 6px;min-height:150px;justify-content:flex-end}
+.slot.empty{pointer-events:none}
+.slot.empty .waiting{display:flex}
+.waiting{display:none;height:100px;width:84%;border:2px dashed var(--wood);border-radius:16px;align-items:center;justify-content:center;font-size:11px;color:var(--ink-soft);text-align:center;padding:6px}
+.slot.empty .cust{display:none}
+.cust{display:flex;flex-direction:column;align-items:center;gap:4px;width:100%;animation:walkin .35s ease-out}
+@keyframes walkin{from{transform:translateY(16px);opacity:.2}}
+.bubble{background:#FFFFFF;border:2px solid var(--coffee);border-radius:14px;padding:5px 8px;text-align:center;font-weight:700;font-size:14px;line-height:1.2;max-width:100%;position:relative}
+.bubble::after{content:"";position:absolute;left:50%;bottom:-7px;width:10px;height:10px;background:#FFFFFF;border-right:2px solid var(--coffee);border-bottom:2px solid var(--coffee);transform:translateX(-50%) rotate(45deg)}
+.bubble small{display:block;font-weight:600;font-size:11px;color:var(--ink-soft)}
+.slot.low .bubble{border-color:var(--stool)}
+.slot.low .bubble::after{border-color:var(--stool)}
+.avatar{width:clamp(62px,19vw,84px);height:auto}
+.avatar .m-sad{display:none}
+.slot.low .avatar .m-sad{display:inline}
+.slot.low .avatar .m-happy{display:none}
+.bar{width:78%;height:8px;border-radius:4px;background:var(--wood);overflow:hidden}
+.bar i{display:block;height:100%;width:100%;background:var(--ok)}
+.slot.mid .bar i{background:var(--gold)}
+.slot.low .bar i{background:var(--stool)}
+.slot:not(.empty):active .avatar{transform:scale(.96)}
+
+.counter{height:16px;background:var(--bean);border-top:4px solid var(--coffee);flex-shrink:0}
+.station{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 16px 6px}
+.cupwrap{display:flex;flex-direction:column;align-items:center;gap:4px;flex:1;min-width:0}
+.cup{width:112px;height:132px;border:3px solid var(--coffee);border-top:none;border-radius:0 0 24px 24px;background:rgba(255,255,255,.75);display:flex;flex-direction:column-reverse;overflow:hidden}
+.layer{height:31px;flex-shrink:0;border-top:1px solid rgba(58,34,23,.18);animation:pour .2s ease-out}
+.layer.ice{background-image:radial-gradient(circle at 25% 40%,rgba(255,255,255,.95) 0 5px,transparent 6px),radial-gradient(circle at 70% 60%,rgba(255,255,255,.95) 0 5px,transparent 6px)}
+@keyframes pour{from{transform:scaleY(.2);transform-origin:bottom}}
+.cuplabel{font-size:12px;font-weight:600;color:var(--ink-soft);text-align:center;min-height:16px}
+.trash{width:58px;height:58px;border-radius:16px;border:2px solid var(--coffee);background:var(--paper);display:flex;align-items:center;justify-content:center}
+.hint{width:58px;font-size:11px;font-weight:600;color:var(--ink-soft);text-align:center;line-height:1.3}
+.msg{margin:0 16px;min-height:36px;padding:7px 12px;background:var(--paper);border-radius:12px;font-size:13px;font-weight:600;text-align:center;display:flex;align-items:center;justify-content:center}
+.msg.good{background:#DDEFE3;color:#1D5B39}
+.msg.bad{background:#F8DCD8;color:#8E231B}
+.shelf{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;padding:10px 16px 14px;margin-top:8px;background:var(--wood);border-top:4px solid var(--bean)}
+.ing{position:relative;height:64px;border-radius:14px;border:2px solid var(--coffee);background:var(--paper);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;font-size:13px;font-weight:700;overflow:hidden}
+.ing .dot{width:22px;height:22px;border-width:2px}
+.ing:active{transform:translateY(2px)}
+.ing .cd{position:absolute;inset:auto 0 0 0;height:0;background:rgba(58,34,23,.18);pointer-events:none}
+.ing.wait{color:var(--ink-soft)}
+
+.pop{position:absolute;font-family:var(--display);font-weight:800;font-size:20px;pointer-events:none;animation:rise 1s ease-out forwards;white-space:nowrap;z-index:5;transform:translateX(-50%)}
+.pop.good{color:var(--ok)} .pop.bad{color:var(--stool)}
+@keyframes rise{to{margin-top:-46px;opacity:0}}
+
+/* ---------- Overlay & Result ---------- */
+.overlay{position:absolute;inset:0;background:rgba(58,34,23,.55);display:flex;align-items:center;justify-content:center;padding:16px;z-index:10}
+.sheet{width:100%;max-height:100%;overflow-y:auto;background:var(--cream);border:3px solid var(--coffee);border-radius:22px;padding:18px 16px;display:flex;flex-direction:column;gap:12px}
+.sheet h2{margin:0;font-family:var(--display);font-weight:800;font-size:28px}
+#result{padding:28px 16px 20px;gap:16px;align-items:center;overflow-y:auto}
+.verdict{font-family:var(--display);font-weight:800;font-size:38px;line-height:1;text-align:center;text-wrap:balance}
+.verdict.win{color:var(--tile)} .verdict.lose{color:var(--stool)}
+.story{background:var(--paper);border:2px solid var(--wood);border-radius:18px;padding:14px 16px;font-size:14px;line-height:1.55;width:100%}
+.story b{display:block;font-size:12px;letter-spacing:1px;text-transform:uppercase;color:var(--bean);margin-bottom:4px}
+.stats{width:100%;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.stat{background:var(--paper);border-radius:14px;padding:10px 12px;display:flex;flex-direction:column;gap:2px}
+.stat span{font-size:12px;color:var(--ink-soft);font-weight:600}
+.stat b{font-family:var(--display);font-size:22px;font-variant-numeric:tabular-nums}
+
+@media (max-height:700px){
+  .queue{min-height:132px}.slot{min-height:132px}.avatar{width:58px}
+  .cup{height:112px;width:100px}.layer{height:26px}
+  .ing{height:56px}.station{padding-top:8px}
+}
+@media (prefers-reduced-motion:reduce){
+  *{animation:none!important;transition:none!important}
+}
+</style>
+</head>
+<body>
+
+<div class="app" id="app">
+
+  <!-- START -->
+  <section class="screen" id="start">
+    <div class="eyebrow">Quán bà Tư · Hẻm quận 3</div>
+    <h1>Quán Cà Phê<span>60 Giây</span></h1>
+    <svg class="store" viewBox="0 0 342 230" aria-hidden="true">
+      <rect x="20" y="62" width="302" height="150" fill="#E6D3B5" stroke="#3A2217" stroke-width="3"/>
+      <rect x="40" y="12" width="262" height="44" rx="8" fill="#1F6F64" stroke="#3A2217" stroke-width="3"/>
+      <text x="171" y="42" text-anchor="middle" font-family="Baloo 2, sans-serif" font-weight="800" font-size="22" fill="#FFFFFF">CÀ PHÊ BÀ TƯ</text>
+      <path d="M10 62 L332 62 L322 100 L20 100 Z" fill="#C8372D" stroke="#3A2217" stroke-width="3"/>
+      <path d="M60 62 L56 100 M110 62 L108 100 M160 62 L160 100 M210 62 L212 100 M260 62 L264 100 M300 62 L306 100" stroke="#F6EBD9" stroke-width="14"/>
+      <path d="M20 100 Q45 116 70 100 Q95 116 120 100 Q145 116 170 100 Q195 116 220 100 Q245 116 270 100 Q295 116 322 100" fill="#C8372D" stroke="#3A2217" stroke-width="3"/>
+      <rect x="50" y="124" width="110" height="88" fill="#3A2217"/>
+      <rect x="58" y="132" width="94" height="44" fill="#F2C14E" opacity=".85"/>
+      <rect x="190" y="128" width="104" height="56" fill="#FFF9F0" stroke="#3A2217" stroke-width="3"/>
+      <text x="242" y="152" text-anchor="middle" font-family="Be Vietnam Pro, sans-serif" font-weight="700" font-size="13" fill="#3A2217">Đen đá 20k</text>
+      <text x="242" y="172" text-anchor="middle" font-family="Be Vietnam Pro, sans-serif" font-weight="700" font-size="13" fill="#3A2217">Nâu đá 25k</text>
+      <rect x="0" y="210" width="342" height="20" fill="#9C9184"/>
+      <g stroke="#3A2217" stroke-width="2.5" fill="none">
+        <rect x="230" y="192" width="40" height="9" rx="3" fill="#2F6FB0"/><path d="M234 201 L231 222 M266 201 L269 222"/>
+        <rect x="280" y="192" width="40" height="9" rx="3" fill="#C8372D"/><path d="M284 201 L281 222 M316 201 L319 222"/>
+      </g>
+    </svg>
+    <div class="daychips" id="dayChips" role="group" aria-label="Chọn ngày"></div>
+    <div class="brief">
+      <div class="brief-row"><span id="briefDay">Ngày 1 / 3</span><b id="briefTarget">200.000đ</b></div>
+      <div class="brief-row" style="margin-top:-8px"><span id="briefStory" style="color:var(--ink-soft)"></span><span style="font-size:12px;color:var(--ink-soft)">mục tiêu</span></div>
+      <div class="recipes" id="briefRecipes"></div>
+    </div>
+    <button class="big" id="btnOpen">Mở quán</button>
+    <div class="rowbtns">
+      <button class="sec" id="btnSound" aria-pressed="true">Âm thanh: Bật</button>
+      <button class="sec" id="btnHow">Cách chơi</button>
+    </div>
+  </section>
+
+  <!-- PLAY -->
+  <section class="screen" id="play" hidden>
+    <div class="hud">
+      <div class="timer" id="timer" aria-label="Thời gian còn lại">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.6" stroke-linecap="round"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l3 2"/><path d="M9 2h6"/></svg>
+        <span id="time">1:00</span>
+      </div>
+      <div class="money" id="money" aria-live="polite">0đ</div>
+      <div class="stars" id="stars" aria-label="Sao uy tín"></div>
+      <button class="iconbtn" id="btnPause" aria-label="Tạm dừng, xem công thức">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#3A2217" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2z"/><path d="M4 19V5"/><path d="M9 8h6"/></svg>
+      </button>
+    </div>
+    <div class="goal"><span id="goalTxt">Ngày 1</span><div class="goalbar"><i id="goalBar"></i></div><span id="combo"></span></div>
+    <div class="queue" id="queue"></div>
+    <div class="counter"></div>
+    <div class="station">
+      <button class="trash" id="btnTrash" aria-label="Đổ ly đang pha">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#3A2217" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="M6 6l1 14h10l1-14"/><path d="M10 10v6"/><path d="M14 10v6"/></svg>
+      </button>
+      <div class="cupwrap">
+        <div class="cup" id="cup"></div>
+        <div class="cuplabel" id="cupLabel">Ly trống</div>
+      </div>
+      <div class="hint">Pha xong thì chạm vào khách để giao</div>
+    </div>
+    <div class="msg" id="msg" aria-live="polite">Chạm nguyên liệu theo đúng thứ tự công thức</div>
+    <div class="shelf" id="shelf"></div>
+  </section>
+
+  <!-- RESULT -->
+  <section class="screen" id="result" hidden>
+    <div class="eyebrow" id="resDay">Hết ngày 1</div>
+    <div class="verdict" id="resVerdict">Giữ được quán!</div>
+    <div class="stats">
+      <div class="stat"><span>Doanh thu</span><b id="resMoney">0đ</b></div>
+      <div class="stat"><span>Mục tiêu</span><b id="resTarget">0đ</b></div>
+      <div class="stat"><span>Ly đã giao</span><b id="resServed">0</b></div>
+      <div class="stat"><span>Sao còn lại</span><b id="resStars">3 / 3</b></div>
+    </div>
+    <div class="story" id="resStory"></div>
+    <button class="big" id="resNext">Ngày tiếp theo</button>
+    <div class="rowbtns">
+      <button class="sec" id="resRetry">Chơi lại ngày này</button>
+      <button class="sec" id="resMenu">Về quán</button>
+    </div>
+  </section>
+
+  <!-- OVERLAY -->
+  <div class="overlay" id="overlay" hidden>
+    <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="ovTitle">
+      <h2 id="ovTitle">Sổ công thức</h2>
+      <div id="ovBody"></div>
+      <button class="big" id="ovClose" style="background:var(--tile)">Tiếp tục</button>
+      <button class="ghost" id="ovQuit">Đóng quán, về màn hình chính</button>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+const ING = {
+  da:   {name:'Đá',         color:'#D6ECF3', ice:true},
+  sua:  {name:'Sữa đặc',    color:'#EBD7AE'},
+  tuoi: {name:'Sữa tươi',   color:'#FFFFFF'},
+  phin: {name:'Cà phê phin',color:'#4A2C1D'},
+  tra:  {name:'Trà',        color:'#C98A2E'},
+  muoi: {name:'Kem muối',   color:'#F3EBDD'}
+};
+const SHELF = ['da','sua','phin','tuoi','tra','muoi'];
+const DRINKS = {
+  den:    {name:'Đen đá',      recipe:['da','phin'],             price:20000},
+  nau:    {name:'Nâu đá',      recipe:['sua','da','phin'],       price:25000},
+  bacxiu: {name:'Bạc xỉu',     recipe:['sua','tuoi','da','phin'],price:30000},
+  tra:    {name:'Trà đá',      recipe:['da','tra'],              price:5000},
+  muoi:   {name:'Cà phê muối', recipe:['da','phin','muoi'],      price:35000}
+};
+const TYPES = {
+  sv:   {name:'Sinh viên',     patience:12, shirt:'#2F6FB0'},
+  vp:   {name:'Dân văn phòng', patience:9,  shirt:'#F5F5F0', tie:true, bonus:5000},
+  ship: {name:'Shipper',       patience:7,  shirt:'#2E8B57', helmet:true, bonus:5000}
+};
+const DAYS = [
+  {target:200000, drinks:['den','nau'], fresh:['den','nau'], types:['sv','sv','vp'], spawn:4.2,
+   story:'Ngày đầu mở lại quán', win:'Bà Tư dặn: "Pha bằng cái tâm, con à." Mai sẽ có shipper ghé.', lose:'Khách còn thưa, tay còn chậm. Thử lại nhé, nhớ thứ tự công thức.'},
+  {target:250000, drinks:['den','nau','bacxiu','tra'], fresh:['bacxiu','tra'], types:['sv','vp','ship'], spawn:3.6,
+   story:'Chú Sáu nhắc hạn tiền thuê', win:'Minh tìm thấy sổ công thức cũ của bà, có món cà phê muối.', lose:'Chú Sáu lắc đầu nhìn sổ. Còn kịp làm lại ngày hôm nay.'},
+  {target:320000, drinks:['den','nau','bacxiu','tra','muoi'], fresh:['muoi'], types:['sv','vp','ship','ship'], spawn:3.1,
+   story:'Khách đông dần lên', win:'Quán đã đông trở lại! Bạn đã hoàn thành bản chơi thử 3 ngày.', lose:'Ca này quá đông. Thử lại, ưu tiên khách có thanh đỏ trước.'}
+];
+const SKIN = ['#E8B48A','#F0C29A','#D9A274','#C98E62'];
+const HAIR = ['#2B1A12','#5B3321','#1E1410','#7A4A2E'];
+
+const $ = id => document.getElementById(id);
+const fmt = n => Math.max(0,Math.round(n)).toLocaleString('vi-VN') + 'đ';
+
+// ---------- save ----------
+let save = {day:1, best:{}};
+try{ const v = JSON.parse(localStorage.getItem('cafe60') || 'null'); if(v && v.day) save = v; }catch(e){}
+function persist(){ try{ localStorage.setItem('cafe60', JSON.stringify(save)); }catch(e){} }
+let chosenDay = save.day;
+
+// ---------- sound ----------
+let soundOn = true, actx = null;
+function beep(freq, dur, type, vol){
+  if(!soundOn) return;
+  try{
+    if(!actx) actx = new (window.AudioContext || window.webkitAudioContext)();
+    const o = actx.createOscillator(), g = actx.createGain();
+    o.type = type || 'sine'; o.frequency.value = freq;
+    g.gain.setValueAtTime(vol || .12, actx.currentTime);
+    g.gain.exponentialRampToValueAtTime(.0001, actx.currentTime + dur);
+    o.connect(g); g.connect(actx.destination); o.start(); o.stop(actx.currentTime + dur);
+  }catch(e){}
+}
+const sfx = {
+  tap(){ beep(660,.06,'triangle',.08); },
+  ok(){ beep(880,.1,'sine'); setTimeout(()=>beep(1320,.16,'sine'),90); },
+  bad(){ beep(180,.25,'square',.07); try{ navigator.vibrate && navigator.vibrate(80); }catch(e){} },
+  leave(){ beep(240,.3,'sawtooth',.05); }
+};
+
+// ---------- helpers ----------
+function steps(recipe){
+  return recipe.map(id => `<span class="step"><span class="dot" style="background:${ING[id].color}"></span>${ING[id].name}</span>`).join('<span aria-hidden="true">→</span>');
+}
+function recipeList(keys, fresh){
+  return keys.map(k => `<div class="rec"><div class="rec-head"><span>${DRINKS[k].name}${fresh && fresh.includes(k) ? '<span class="new">MỚI</span>' : ''}</span><span>${fmt(DRINKS[k].price)}</span></div><div class="rec-steps">${steps(DRINKS[k].recipe)}</div></div>`).join('');
+}
+function starSvg(on){
+  return `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l3 6.5 7 .8-5.2 4.8 1.5 7L12 17.6 5.7 21l1.5-7L2 9.3l7-.8z" fill="${on ? '#E9A92B' : '#F6EBD9'}" stroke="#3A2217" stroke-width="1.3"/></svg>`;
+}
+function avatar(t, skin, hair){
+  const tie = t.tie ? '<path d="M45 58 L41 68 L45 90 L49 68 Z" fill="#2F6FB0"/>' : '';
+  const top = t.helmet
+    ? '<path d="M21 36 C21 8 69 8 69 36 Z" fill="#E9A92B" stroke="#3A2217" stroke-width="2"/><rect x="21" y="33" width="48" height="5" fill="#3A2217"/>'
+    : `<path d="M23 34 C22 12 68 12 67 34 C58 24 34 22 23 34 Z" fill="${hair}"/>`;
+  return `<svg class="avatar" viewBox="0 0 90 104" aria-hidden="true"><rect x="16" y="56" width="58" height="48" rx="20" fill="${t.shirt}" stroke="#3A2217" stroke-width="2"/>${tie}<circle cx="45" cy="38" r="22" fill="${skin}" stroke="#3A2217" stroke-width="2"/>${top}<circle cx="37" cy="42" r="2.5" fill="#2B1A12"/><circle cx="53" cy="42" r="2.5" fill="#2B1A12"/><path class="m-happy" d="M39 51 Q45 55 51 51" stroke="#2B1A12" stroke-width="2" fill="none" stroke-linecap="round"/><path class="m-sad" d="M39 54 Q45 49 51 54" stroke="#2B1A12" stroke-width="2" fill="none" stroke-linecap="round"/></svg>`;
+}
+const pick = a => a[Math.floor(Math.random()*a.length)];
+function show(id){ ['start','play','result'].forEach(s => $(s).hidden = s !== id); }
+
+// ---------- start screen ----------
+function renderStart(){
+  const chips = $('dayChips'); chips.innerHTML = '';
+  DAYS.forEach((d,i) => {
+    const b = document.createElement('button');
+    b.className = 'chip'; b.textContent = 'Ngày ' + (i+1);
+    b.disabled = i+1 > save.day;
+    b.setAttribute('aria-pressed', String(i+1 === chosenDay));
+    b.onclick = () => { chosenDay = i+1; renderStart(); };
+    chips.appendChild(b);
+  });
+  const d = DAYS[chosenDay-1];
+  $('briefDay').textContent = 'Ngày ' + chosenDay + ' / 3';
+  $('briefTarget').textContent = fmt(d.target);
+  $('briefStory').textContent = d.story;
+  $('briefRecipes').innerHTML = recipeList(d.drinks, d.fresh);
+  show('start');
+}
+
+// ---------- game ----------
+let G = null, raf = 0, last = 0;
+const slotEls = [];
+
+function buildBoard(){
+  const q = $('queue'); q.innerHTML = ''; slotEls.length = 0;
+  for(let i=0;i<3;i++){
+    const b = document.createElement('button');
+    b.className = 'slot empty';
+    b.innerHTML = '<div class="waiting">Đang chờ khách…</div><div class="cust"></div>';
+    b.onclick = () => serve(i);
+    q.appendChild(b); slotEls.push(b);
+  }
+  const s = $('shelf'); s.innerHTML = '';
+  SHELF.forEach(id => {
+    const b = document.createElement('button');
+    b.className = 'ing'; b.id = 'ing-' + id;
+    b.innerHTML = `<span class="dot" style="background:${ING[id].color}"></span><span>${ING[id].name}</span><span class="cd"></span>`;
+    b.onclick = () => addIng(id);
+    s.appendChild(b);
+  });
+}
+
+function startDay(day){
+  chosenDay = day;
+  const cfg = DAYS[day-1];
+  G = {day, cfg, time:60, money:0, stars:3, served:0, combo:0, cup:[], slots:[null,null,null], spawnT:.4, phinCd:0, running:true, paused:false};
+  buildBoard(); renderCup(); setMsg('Chạm nguyên liệu theo đúng thứ tự công thức');
+  $('goalTxt').textContent = 'Ngày ' + day;
+  show('play'); renderHud();
+  last = performance.now(); cancelAnimationFrame(raf); raf = requestAnimationFrame(loop);
+}
+
+function loop(ts){
+  const dt = Math.min(.1, (ts - last)/1000); last = ts;
+  if(G && G.running){
+    if(!G.paused) update(dt);
+    raf = requestAnimationFrame(loop);
+  }
+}
+
+function update(dt){
+  G.time -= dt;
+  if(G.time <= 0){ G.time = 0; renderHud(); return endDay(); }
+  if(G.phinCd > 0){ G.phinCd = Math.max(0, G.phinCd - dt); }
+  const cd = document.querySelector('#ing-phin .cd');
+  if(cd){ cd.style.height = (G.phinCd/1.2*100) + '%'; $('ing-phin').classList.toggle('wait', G.phinCd > 0); }
+
+  G.spawnT -= dt;
+  if(G.spawnT <= 0){
+    const free = G.slots.map((c,i)=>c?-1:i).filter(i=>i>=0);
+    if(free.length){ spawn(pick(free)); G.spawnT = G.cfg.spawn*(.75 + Math.random()*.5); }
+    else G.spawnT = .5;
+  }
+  G.slots.forEach((c,i) => {
+    if(!c) return;
+    c.p -= dt;
+    if(c.p <= 0) return customerLeaves(i);
+    const r = c.p / c.max, el = slotEls[i];
+    el.querySelector('.bar i').style.width = (r*100) + '%';
+    el.classList.toggle('mid', r <= .7 && r > .3);
+    el.classList.toggle('low', r <= .3);
+  });
+  renderHud();
+}
+
+function spawn(i){
+  const tk = pick(G.cfg.types), t = TYPES[tk];
+  const dk = pick(G.cfg.drinks);
+  const c = {type:t, drink:dk, max:t.patience, p:t.patience};
+  G.slots[i] = c;
+  const el = slotEls[i];
+  el.classList.remove('empty','mid','low');
+  el.setAttribute('aria-label', t.name + ' gọi ' + DRINKS[dk].name + '. Chạm để giao món.');
+  el.querySelector('.cust').outerHTML = `<div class="cust"><div class="bubble">${DRINKS[dk].name}<small>${t.name}</small></div>${avatar(t, pick(SKIN), pick(HAIR))}<div class="bar"><i></i></div></div>`;
+}
+
+function clearSlot(i){
+  G.slots[i] = null;
+  const el = slotEls[i];
+  el.classList.add('empty'); el.classList.remove('mid','low');
+  el.removeAttribute('aria-label');
+}
+
+function customerLeaves(i){
+  clearSlot(i);
+  G.stars--; G.combo = 0; sfx.leave();
+  pop('−1 sao', slotEls[i], false);
+  setMsg('Khách chờ lâu quá nên bỏ đi mất!', 'bad');
+  if(G.stars <= 0){ renderHud(); endDay(); }
+}
+
+function addIng(id){
+  if(!G || !G.running || G.paused) return;
+  if(id === 'phin' && G.phinCd > 0) return setMsg('Phin đang nhỏ giọt, chờ chút…');
+  if(G.cup.length >= 4) return setMsg('Ly đầy rồi! Giao cho khách hoặc đổ đi.', 'bad');
+  G.cup.push(id);
+  if(id === 'phin') G.phinCd = 1.2;
+  sfx.tap(); renderCup(); setMsg('');
+}
+
+function renderCup(){
+  $('cup').innerHTML = G.cup.map(id => `<div class="layer${ING[id].ice ? ' ice' : ''}" style="background-color:${ING[id].color}"></div>`).join('');
+  $('cupLabel').textContent = G.cup.length ? G.cup.map(id => ING[id].name).join(' → ') : 'Ly trống';
+}
+
+function trash(){
+  if(!G || !G.running || G.paused || !G.cup.length) return;
+  G.cup = []; G.money -= 1000; G.combo = 0; renderCup(); renderHud();
+  setMsg('Đã đổ ly, mất 1.000đ tiền ly. Pha lại nhé.');
+}
+
+function serve(i){
+  if(!G || !G.running || G.paused) return;
+  const c = G.slots[i]; if(!c) return;
+  if(!G.cup.length) return setMsg('Ly còn trống, pha món ' + DRINKS[c.drink].name + ' trước đã.');
+  const want = DRINKS[c.drink];
+  if(G.cup.join() === want.recipe.join()){
+    const r = c.p / c.max;
+    let tip = r > .7 ? 10000 : r > .3 ? 5000 : 0;
+    if(r > .7 && c.type.bonus) tip += c.type.bonus;
+    let combo = false;
+    G.combo++;
+    if(G.combo >= 6){ tip *= 2; G.combo = 0; combo = true; }
+    const earn = want.price + tip;
+    G.money += earn; G.served++;
+    G.cup = []; renderCup(); clearSlot(i); sfx.ok();
+    pop('+' + fmt(earn), slotEls[i], true);
+    setMsg(combo ? 'Combo 6 ly! Tiền tip nhân đôi.' : tip ? 'Chuẩn vị! Khách tip ' + fmt(tip) + '.' : 'Đúng món, nhưng khách chờ hơi lâu nên không tip.', 'good');
+  } else {
+    G.cup = []; G.money -= 1000; G.combo = 0;
+    c.p = Math.max(.5, c.p - c.max*.25);
+    renderCup(); sfx.bad();
+    pop('Sai món', slotEls[i], false);
+    setMsg(want.name + ' là: ' + want.recipe.map(id => ING[id].name).join(' → '), 'bad');
+  }
+  renderHud();
+}
+
+function pop(text, el, good){
+  const app = $('app'), a = app.getBoundingClientRect(), r = el.getBoundingClientRect();
+  const p = document.createElement('div');
+  p.className = 'pop ' + (good ? 'good' : 'bad'); p.textContent = text;
+  p.style.left = (r.left - a.left + r.width/2) + 'px';
+  p.style.top = (r.top - a.top + 10) + 'px';
+  app.appendChild(p); setTimeout(() => p.remove(), 1000);
+}
+
+let msgTimer = 0;
+function setMsg(t, kind){
+  const m = $('msg');
+  m.textContent = t || (G && G.cup.length ? 'Chạm vào khách để giao ly này' : 'Chạm nguyên liệu theo đúng thứ tự công thức');
+  m.className = 'msg' + (kind ? ' ' + kind : '');
+  clearTimeout(msgTimer);
+  if(kind) msgTimer = setTimeout(() => { if(G && G.running) setMsg(''); }, 2600);
+}
+
+function renderHud(){
+  const s = Math.ceil(G.time);
+  $('time').textContent = Math.floor(s/60) + ':' + String(s%60).padStart(2,'0');
+  $('timer').classList.toggle('hurry', G.time <= 10 && G.running);
+  $('money').textContent = fmt(G.money);
+  $('stars').innerHTML = [0,1,2].map(i => starSvg(i < G.stars)).join('');
+  $('stars').setAttribute('aria-label', G.stars + ' trên 3 sao');
+  $('goalBar').style.width = Math.min(100, G.money/G.cfg.target*100) + '%';
+  $('combo').textContent = G.combo >= 3 ? 'Combo ×' + G.combo : '';
+  $('combo').className = 'combo';
+}
+
+function endDay(){
+  if(!G.running) return;
+  G.running = false; cancelAnimationFrame(raf);
+  const cfg = G.cfg, win = G.money >= cfg.target && G.stars > 0;
+  if(win && G.day === save.day && save.day < DAYS.length) save.day++;
+  save.best[G.day] = Math.max(save.best[G.day] || 0, win ? G.money : 0);
+  persist();
+  $('resDay').textContent = 'Hết ngày ' + G.day;
+  $('resVerdict').textContent = win ? (G.day === DAYS.length ? 'Quán đông trở lại!' : 'Giữ được quán!') : (G.stars <= 0 ? 'Mất hết sao uy tín' : 'Chưa đủ doanh thu');
+  $('resVerdict').className = 'verdict ' + (win ? 'win' : 'lose');
+  $('resMoney').textContent = fmt(G.money);
+  $('resTarget').textContent = fmt(cfg.target);
+  $('resServed').textContent = G.served;
+  $('resStars').textContent = Math.max(0,G.stars) + ' / 3';
+  $('resStory').innerHTML = '<b>' + (win ? 'Buổi tối ở quán' : 'Chú Sáu ghé qua') + '</b>' + (win ? cfg.win : cfg.lose);
+  const next = $('resNext');
+  if(win && G.day < DAYS.length){ next.hidden = false; next.textContent = 'Sang ngày ' + (G.day+1); next.onclick = () => startDay(G.day+1); }
+  else if(win){ next.hidden = false; next.textContent = 'Chơi lại từ ngày 1'; next.onclick = () => startDay(1); }
+  else { next.hidden = false; next.textContent = 'Thử lại ngày ' + G.day; next.onclick = () => startDay(G.day); }
+  $('resRetry').hidden = !win;
+  if(win) win && G.day === DAYS.length && sfx.ok();
+  show('result');
+}
+
+// ---------- overlay ----------
+function openBook(mode){
+  if(G && G.running) G.paused = true;
+  const d = DAYS[chosenDay-1];
+  if(mode === 'how'){
+    $('ovTitle').textContent = 'Cách chơi';
+    $('ovBody').innerHTML = '<div class="story" style="padding:12px 14px"><b>Mỗi ngày 60 giây</b>Khách hiện tên món trong bong bóng. Chạm các nguyên liệu dưới kệ theo đúng thứ tự công thức, rồi chạm vào khách để giao.<br><br>Giao nhanh khi thanh còn xanh để được tip. Khách chờ hết thanh sẽ bỏ đi và bạn mất 1 sao. Mất cả 3 sao là đóng quán sớm.<br><br>Pha sai thì đổ ly ở nút thùng rác (mất 1.000đ). Phin cần 1,2 giây để nhỏ giọt lại. Giao đúng 6 ly liên tiếp thì tip nhân đôi.</div>';
+    $('ovQuit').hidden = true;
+  } else {
+    $('ovTitle').textContent = 'Sổ công thức';
+    $('ovBody').innerHTML = '<div class="recipes">' + recipeList(d.drinks) + '</div>';
+    $('ovQuit').hidden = !(G && G.running);
+  }
+  $('overlay').hidden = false; $('ovClose').focus();
+}
+function closeBook(){
+  $('overlay').hidden = true;
+  if(G && G.running){ G.paused = false; last = performance.now(); }
+}
+
+// ---------- wire up ----------
+$('btnOpen').onclick = () => { beep(1,.01); startDay(chosenDay); };
+$('btnHow').onclick = () => openBook('how');
+$('btnSound').onclick = () => {
+  soundOn = !soundOn;
+  $('btnSound').textContent = 'Âm thanh: ' + (soundOn ? 'Bật' : 'Tắt');
+  $('btnSound').setAttribute('aria-pressed', String(soundOn));
+};
+$('btnPause').onclick = () => openBook('book');
+$('btnTrash').onclick = trash;
+$('ovClose').onclick = closeBook;
+$('ovQuit').onclick = () => { $('overlay').hidden = true; G.running = false; cancelAnimationFrame(raf); renderStart(); };
+$('resRetry').onclick = () => startDay(G.day);
+$('resMenu').onclick = () => { chosenDay = Math.min(save.day, DAYS.length); renderStart(); };
+document.addEventListener('visibilitychange', () => { if(document.hidden && G && G.running && !G.paused) openBook('book'); });
+
+renderStart();
+})();
+</script>
+</body>
+</html>
